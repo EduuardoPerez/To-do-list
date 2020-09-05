@@ -4,6 +4,24 @@ app = Flask(__name__)
 
 todos = ['Comprar cafe', 'Solicitud de compra', 'Entregar video al productor']
 
+
+@app.errorhandler(404)
+def not_found(error):
+  return render_template('404.html', error=error )
+
+
+@app.errorhandler(500)
+def internal_server_error(error):
+  return render_template('500.html', error=error )
+
+
+# Route for test how to handle a 500 error
+# The enviroment varible FLASK_DEBUG has to be set in 0 for have disable the DEBUG
+@app.route('/error_500')
+def test_server_error():
+	return 1/0
+
+
 @app.route('/')
 def index():
   user_ip = request.remote_addr
