@@ -3,6 +3,7 @@ from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms.fields import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
+import unittest
 
 
 app = Flask(__name__)
@@ -17,6 +18,13 @@ class LoginForm(FlaskForm ):
   username = StringField('Username', validators=[DataRequired()])
   password = PasswordField('Password', validators=[DataRequired()])
   submit = SubmitField('Send')
+
+
+@app.cli.command()
+def test():
+  # The tests are going to be all the tests that find unittest in the test folder in the root directory of the project
+  test = unittest.TestLoader().discover('tests')
+  unittest.TextTestRunner().run(test)
 
 
 @app.errorhandler(404)
