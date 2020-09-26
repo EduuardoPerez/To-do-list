@@ -52,6 +52,7 @@ class MainTest(TestCase):
     self.client.get(url_for('auth.login'))
     self.assertTemplateUsed('login.html')
 
+  # Verify the authentication and redirect
   def test_auth_login_post(self):
     fake_form = {
       'username': 'fake',
