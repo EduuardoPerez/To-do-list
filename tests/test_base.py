@@ -40,3 +40,18 @@ class MainTest(TestCase):
     response = self.client.post(url_for('hello'), data=fake_form)
 
     self.assertRedirects(response, url_for('index'))
+
+  # Verify if the authentication Blueprints exists
+  def test_auth_blueprint_exists(self):
+    self.assertIn('auth', self.app.blueprints) # Here is where Flask save all the blueprints
+
+  # Verify if the auth login route return a 200 code
+  def test_auth_login_get(self):
+    response = self.client.get(url_for('auth.login'))
+
+    self.assert200(response)
+
+  # Verify if the login template is returned
+  def test_auth_login_template(self):
+    self.client.get(url_for('auth.login'))
+    self.assertTemplateUsed('login.html')
