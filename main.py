@@ -47,26 +47,16 @@ def index():
 
 # By default the flask routes allow the GET method, but when we want allow a POST method we have to declarte both in the list
 # It isn't necesary when the route is just going to accept the GET method
-@app.route('/hello', methods=['GET', 'POST'])
+@app.route('/hello', methods=['GET'])
 def hello():
   user_ip = session.get('user_ip') # The user's IP is obtained from the cookie
-  login_form = LoginForm()
   username = session.get('username')
 
   context = {
     'user_ip': user_ip,
     'todos': todos,
-    'login_form': login_form,
     'username': username
   }
-
-  if login_form.validate_on_submit():
-    username = login_form.username.data
-    session['username'] = username
-
-    flash('Username registered successfully')
-
-    return redirect(url_for('index'))
 
   # The context varible is expanded for pass every key:value as single variables
   return render_template('hello.html', **context)
