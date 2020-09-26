@@ -1,14 +1,13 @@
-from flask import request, make_response, redirect, render_template, session, url_for, flash
-from flask_bootstrap import Bootstrap
 import unittest
+from flask import request, make_response, redirect, render_template, session, url_for, flash
+#from flask_bootstrap import Bootstrap
+from flask_login import login_required
 
 from app import create_app
 from app.forms import LoginForm
 from app.firestore_service import get_users, get_todos
 
 app = create_app()
-
-todos = ['Comprar cafe', 'Solicitud de compra', 'Entregar video al productor']
 
 
 @app.cli.command()
@@ -49,6 +48,7 @@ def index():
 # By default the flask routes allow the GET method, but when we want allow a POST method we have to declarte both in the list
 # It isn't necesary when the route is just going to accept the GET method
 @app.route('/hello', methods=['GET'])
+@login_required
 def hello():
   user_ip = session.get('user_ip') # The user's IP is obtained from the cookie
   username = session.get('username')
@@ -58,12 +58,6 @@ def hello():
     'todos': get_todos(user_id=username),
     'username': username
   }
-
-  users = get_users()
-
-  for user in users:
-    print(user.id)
-    print(user.to_dict()['password'])
 
   # The context varible is expanded for pass every key:value as single variables
   return render_template('hello.html', **context)
