@@ -4,8 +4,8 @@ from flask import request, make_response, redirect, render_template, session, ur
 from flask_login import login_required, current_user
 
 from app import create_app
-from app.forms import LoginForm
-from app.firestore_service import get_users, get_todos
+from app.forms import TodoForm
+from app.firestore_service import get_users, get_todos, put_todo
 
 app = create_app()
 
@@ -47,17 +47,26 @@ def index():
 
 # By default the flask routes allow the GET method, but when we want allow a POST method we have to declarte both in the list
 # It isn't necesary when the route is just going to accept the GET method
-@app.route('/hello', methods=['GET'])
+@app.route('/hello', methods=['GET', 'POST'])
 @login_required
 def hello():
   user_ip = session.get('user_ip') # The user's IP is obtained from the cookie
   username = current_user.id
+  todo_form = TodoForm()
 
   context = {
     'user_ip': user_ip,
     'todos': get_todos(user_id=username),
-    'username': username
+    'username': username,
+    'todo_form': todo_form
   }
+
+  if todo_form.validate_on_submit():
+    put_todo(user_id=username, description=todo_form.description.data)
+
+    flash('Your task was created!')
+
+    return redirect(url_for('hello'))
 
   # The context varible is expanded for pass every key:value as single variables
   return render_template('hello.html', **context)
